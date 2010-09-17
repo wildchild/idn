@@ -1,0 +1,13 @@
+Changes with IDN 0.0.2 (2006-02-11)
+
+* Remove excessive xfree() if a call to stringprep_profile() returns an
+  error. Fixes crash reported in PR #3088.
+
+* Add tests for invalid Stringprep strings and adjust names of already
+  existing test methods.
+
+* Improve existing tests for IDN::Idna.
+
+Changes with IDN 0.0.1 (2005-09-26)
+
+* First release.
