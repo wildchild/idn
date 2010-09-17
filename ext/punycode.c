@@ -66,7 +66,7 @@ static VALUE encode(VALUE self, VALUE str)
   VALUE retv;
 
   str = rb_check_convert_type(str, T_STRING, "String", "to_s");
-  ustr = stringprep_utf8_to_ucs4(RSTRING(str)->ptr, RSTRING(str)->len, &len);
+  ustr = stringprep_utf8_to_ucs4(RSTRING_PTR(str), RSTRING_LEN(str), &len);
 
   while (1) {
     buf = realloc(buf, buflen);
@@ -116,7 +116,7 @@ static VALUE decode(VALUE self, VALUE str)
 
   str = rb_check_convert_type(str, T_STRING, "String", "to_s");
 
-  len = RSTRING(str)->len;
+  len = RSTRING_LEN(str);
   ustr = malloc(len * sizeof(punycode_uint));
 
   if (ustr == NULL) {
@@ -124,7 +124,7 @@ static VALUE decode(VALUE self, VALUE str)
     return Qnil;
   }
 
-  rc = punycode_decode(RSTRING(str)->len, RSTRING(str)->ptr,
+  rc = punycode_decode(RSTRING_LEN(str), RSTRING_PTR(str),
                        &len, ustr, NULL);
 
   if (rc != PUNYCODE_SUCCESS) {

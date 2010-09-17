@@ -85,7 +85,7 @@ static VALUE toASCII(int argc, VALUE argv[], VALUE self)
     flags = 0x0000;
   }
 
-  rc = idna_to_ascii_8z(RSTRING(str)->ptr, &buf, flags);
+  rc = idna_to_ascii_8z(RSTRING_PTR(str), &buf, flags);
 
   if (rc != IDNA_SUCCESS) {
     xfree(buf);
@@ -125,7 +125,7 @@ static VALUE toUnicode(int argc, VALUE argv[], VALUE self)
     flags = 0x0000;
   }
 
-  rc = idna_to_unicode_8z8z(RSTRING(str)->ptr, &buf, flags);
+  rc = idna_to_unicode_8z8z(RSTRING_PTR(str), &buf, flags);
 
   if (rc != IDNA_SUCCESS) {
     xfree(buf);

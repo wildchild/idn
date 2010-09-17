@@ -64,7 +64,7 @@ static VALUE stringprep_internal(VALUE str, const char *profile)
   VALUE retv;
 
   str = rb_check_convert_type(str, T_STRING, "String", "to_s");
-  rc = stringprep_profile(RSTRING(str)->ptr, &buf, profile, 0);
+  rc = stringprep_profile(RSTRING_PTR(str), &buf, profile, 0);
 
   if (rc != STRINGPREP_OK) {
     rb_raise(eStringprepError, "%s (%d)", stringprep_strerror(rc), rc);
@@ -135,7 +135,7 @@ static VALUE resourceprep(VALUE self, VALUE str)
 static VALUE with_profile(VALUE self, VALUE str, VALUE profile)
 {
   profile = rb_check_convert_type(profile, T_STRING, "String", "to_s");
-  return stringprep_internal(str, RSTRING(profile)->ptr);
+  return stringprep_internal(str, RSTRING_PTR(profile));
 }
 
 /*
@@ -153,7 +153,7 @@ static VALUE nfkc_normalize(VALUE self, VALUE str)
   VALUE retv;
 
   str = rb_check_convert_type(str, T_STRING, "String", "to_s");
-  buf = stringprep_utf8_nfkc_normalize(RSTRING(str)->ptr, RSTRING(str)->len);
+  buf = stringprep_utf8_nfkc_normalize(RSTRING_PTR(str), RSTRING_LEN(str));
 
   retv = rb_str_new2(buf);
   xfree(buf);
