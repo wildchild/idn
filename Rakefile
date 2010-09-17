@@ -24,39 +24,6 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/contrib/sshpublisher'
 
-begin
-  require 'rubygems'
-  require 'rake/gempackagetask'
-rescue Exception
-  nil
-end
-
-PKG_NAME = 'idn'
-PKG_VERSION = '0.0.2'
-
-PKG_AUTHOR = 'Erik Abele'
-PKG_EMAIL = 'erikabele@rubyforge.org'
-
-PKG_SUMMARY = 'LibIDN Ruby Bindings'
-
-PKG_DESCRIPTION = <<-EOF
-  Ruby Bindings for the GNU LibIDN library, an implementation of the
-  Stringprep, Punycode and IDNA specifications defined by the IETF
-  Internationalized Domain Names (IDN) working group.
-
-  Included are the most important parts of the Stringprep, Punycode
-  and IDNA APIs like performing Stringprep processings, encoding to
-  and decoding from Punycode strings and converting entire domain names
-  to and from the ACE encoded form.
-EOF
-
-PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
-
-PKG_FILES = FileList[
-  'README', 'CHANGES', 'LICENSE', 'NOTICE', 'Rakefile',
-  'ext/**/*.{c,h,rb}', 'lib/**/*.rb', 'test/**/*.rb'
-]
-
 TEST_FILES = FileList[
   'test/ts_*.rb'
 ]
@@ -134,45 +101,26 @@ Rake::RDocTask.new('doc') do |rdoc|
   rdoc.rdoc_files = DOC_FILES
   rdoc.rdoc_dir = 'doc'
   rdoc.main = 'README'
-  rdoc.title = "#{PKG_SUMMARY} Documentation"
+  rdoc.title = 'LibIDN Ruby Bindings Documentation'
   rdoc.options << '-N' << '-S' << '-w 2'
 end
 
 desc 'Publish the documentation'
 task :publish_doc => [:redoc] do
   Rake::SshDirPublisher.new(PKG_EMAIL,
-    "/var/www/gforge-projects/#{PKG_NAME}/docs", 'doc').upload
+    "/var/www/gforge-projects/idn/docs", 'doc').upload
 end
 
-if defined?(Gem) 
-  spec = Gem::Specification.new do |s|
-    s.name = PKG_NAME
-    s.version = PKG_VERSION
-    s.author = PKG_AUTHOR
-    s.email = PKG_EMAIL
-    s.summary = PKG_SUMMARY
-    s.description = PKG_DESCRIPTION
+begin
+  require 'rubygems'
+	require 'rake/gempackagetask'
+	spec = eval(File.read('idn.gemspec'))
 
-    s.rubyforge_project = s.name
-    s.homepage = "http://rubyforge.org/projects/#{PKG_NAME}/"
-
-    s.files = PKG_FILES.delete_if {|f| f.include?('CVS')}
-    s.extensions = ['ext/extconf.rb']
-
-    s.require_path = 'lib'
-    s.autorequire = s.name
-
-    s.test_files = TEST_FILES
-
-    s.has_rdoc = true
-    s.extra_rdoc_files = DOC_FILES
-    s.rdoc_options << '-m' << 'README' <<
-                      '-t' << "#{PKG_SUMMARY} Documentation" <<
-                      '-N' << '-S' << '-w 2'
-  end
-
-  Rake::GemPackageTask.new(spec) do |pkg|
-    pkg.need_zip = true
-    pkg.need_tar_gz = true
-  end
+	Rake::GemPackageTask.new(spec) do |pkg|
+		pkg.need_zip = true
+		pkg.need_tar_gz = true
+	end
+rescue Exception
+  nil
 end
+
